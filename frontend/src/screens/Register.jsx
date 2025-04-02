@@ -26,14 +26,14 @@ const Register = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#121212]">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#1A1F2E]">
       <div className="w-full max-w-md px-8 pt-6 pb-8">
         <div className="text-center mb-8">
         <h1 className="text-2xl font-bold flex flex-col text-white mb-10"> <span className='text-blue-500 text-6xl'> AI Developer </span> [Collaborative Platform]</h1>
           <p className="mt-2 text-gray-200 text-lg ">Create your account</p>
         </div>
 
-        <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full">
+        <div className="bg-[#151923] p-8 rounded-lg shadow-lg w-full">
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-gray-400 mb-2 text-sm font-medium" htmlFor="email">Email</label>
@@ -59,13 +59,13 @@ const Register = () => {
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200 font-medium"
+              className="w-full bg-gradient-to-r from-[#6366F1] to-[#4F46E5] hover:from-[#4F46E5] hover:to-[#4338CA] text-white py-2 rounded transition duration-200 font-medium shadow-lg shadow-indigo-500/20"
             >
               Create Account
             </button>
           </form>
           <p className="text-sm text-gray-400 mt-4 text-center">
-            Already have an account? <Link to="/login" className="text-blue-500 hover:underline font-medium">Sign in</Link>
+            Already have an account? <Link to="/login" className="text-indigo-400 hover:text-indigo-300 font-medium">Sign in</Link>
           </p>
         </div>
       </div>

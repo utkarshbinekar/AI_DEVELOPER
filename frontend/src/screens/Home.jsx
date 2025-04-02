@@ -63,16 +63,17 @@ export const Home = () => {
 
   // Theme classes
   const themeClasses = {
-    mainBg: darkMode ? 'bg-[#121212] text-white' : 'bg-gray-200 text-gray-900',
-    cardBg: darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50',
-    border: darkMode ? 'border-gray-700' : 'border-gray-600',
-    headerBg: darkMode ? 'bg-gray-900' : 'bg-white',
-    inputBg: darkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-900 border-gray-300',
-    buttonPrimary: darkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600',
-    buttonSecondary: darkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-900',
-    modalBg: darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900',
-    placeholder: darkMode ? 'text-gray-400' : 'text-gray-500',
-    newProjectCard: darkMode ? 'bg-gray-800 border-gray-700 border-dashed hover:border-gray-500' : 'bg-white border-gray-500 border-dashed hover:border-gray-400'
+    mainBg: darkMode ? 'bg-gradient-to-br from-[#0F172A] via-[#1E1B4B] to-[#312E81]' : 'bg-gradient-to-br from-gray-50 to-gray-100',
+    headerBg: darkMode ? 'bg-white/5 backdrop-blur-lg border-white/10' : 'bg-white/70 backdrop-blur-lg border-gray-200',
+    cardBg: darkMode ? 'bg-white/10 backdrop-blur-lg hover:bg-white/[0.15]' : 'bg-white hover:bg-gray-50',
+    inputBg: darkMode ? 'bg-white/10 backdrop-blur-lg border-white/10' : 'bg-white border-gray-200',
+    buttonPrimary: 'bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 shadow-lg shadow-indigo-500/25',
+    buttonSecondary: darkMode ? 'bg-white/10 hover:bg-white/[0.15] text-white' : 'bg-white hover:bg-gray-50 text-gray-900',
+    modalBg: darkMode ? 'bg-[#1E1B4B]/90 backdrop-blur-xl border border-white/10' : 'bg-white',
+    border: darkMode ? 'border-white/10' : 'border-gray-200',
+    newProjectCard: darkMode 
+      ? 'bg-white/10 backdrop-blur-lg border-white/10 border-dashed hover:border-violet-500' 
+      : 'bg-white border-gray-300 border-dashed hover:border-violet-500'
   };
 
   return (
@@ -81,8 +82,17 @@ export const Home = () => {
         <header className={`py-4 px-6 border-b ${themeClasses.border} ${themeClasses.headerBg}`}>
           <div className="container mx-auto flex justify-between items-center">
             <div className="flex items-center">
-          <h1 className="text-xl font-bold flex flex-col"> <span className='text-blue-500 text-4xl'> AI Developer </span> [Collaborative Platform]</h1>
-          <h2 className='ml-20 m-10 text-3xl text-blue-300 font-extrabold '>  [ {user?.email.split('@')[0].toUpperCase()} ] </h2>
+          <h1 className="text-xl font-bold flex flex-col">
+            <span className='bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-violet-400 to-indigo-400 text-4xl font-extrabold tracking-tight'>
+              AI Developer
+            </span>
+            <span className="text-gray-400 font-medium">[Collaborative Platform]</span>
+          </h1>
+          <h2 className='ml-20 m-10 text-3xl font-extrabold'>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-indigo-400">
+              [ {user?.email.split('@')[0].toUpperCase()} ]
+            </span>
+          </h2>
             </div>
             <div className="flex items-center gap-4">
             <button

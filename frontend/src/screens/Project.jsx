@@ -461,21 +461,22 @@ useEffect(() => {
   }, [resizeIframe, stopIframeResizing]);
 
 
-  // Theme classes
+  // Update themeClasses object
   const themeClasses = {
-    mainBg: darkMode ? 'bg-[#121212] text-white' : 'bg-gray-200 text-gray-900',
-    sidebarBg: darkMode ? 'bg-gray-900' : 'bg-white',
-    headerBg: darkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200',
-    cardBg: darkMode ? 'bg-gray-800' : 'bg-white',
-    inputBg: darkMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-gray-200 text-gray-900 border-gray-300',
-    buttonPrimary: darkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600',
-    messageReceived: darkMode ? 'bg-gray-700' : 'bg-gray-100',
-    messageSent: darkMode ? 'bg-blue-600' : 'bg-blue-500',
-    modalBg: darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900',
-    border: darkMode ? 'border-gray-700' : 'border-gray-200',
-    hoverBg: darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100',
-    activeTab: darkMode ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-900',
-    inactiveTab: darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'
+    mainBg: darkMode ? 'bg-[#1E1B2E] text-white' : 'bg-[#F8F9FC] text-gray-900',
+    sidebarBg: darkMode ? 'bg-[#252236] hover:bg-[#2A2740]' : 'bg-white',
+    headerBg: darkMode ? 'bg-[#252236] border-[#363147]' : 'bg-white border-gray-200',
+    cardBg: darkMode ? 'bg-[#2A2740]' : 'bg-white',
+    inputBg: darkMode ? 'bg-[#2A2740] text-white border-[#363147]' : 'bg-white text-gray-900 border-gray-200',
+    buttonPrimary: 'bg-gradient-to-r from-[#6366F1] to-[#4F46E5] hover:from-[#4F46E5] hover:to-[#4338CA] text-white shadow-lg shadow-indigo-500/20',
+    messageReceived: darkMode ? 'bg-[#2A2740]' : 'bg-gray-100',
+    messageSent: 'bg-gradient-to-r from-[#6366F1] to-[#4F46E5]',
+    modalBg: darkMode ? 'bg-[#252236] text-white' : 'bg-white text-gray-900',
+    border: darkMode ? 'border-[#363147]' : 'border-gray-200',
+    hoverBg: darkMode ? 'hover:bg-[#2A2740]' : 'hover:bg-gray-100',
+    activeTab: darkMode ? 'bg-[#2A2740] text-white' : 'bg-gray-100 text-gray-900',
+    inactiveTab: darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900',
+    scrollbar: darkMode ? 'scrollbar-thin scrollbar-thumb-[#363147] scrollbar-track-[#252236]' : 'scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100'
   };
 
   const getTabStyle = (width) => {
@@ -782,7 +783,12 @@ useEffect(() => {
         <header className={`px-6 py-4 border-b ${themeClasses.headerBg} ${themeClasses.border}`}>
           <div className="flex justify-between items-center">
             <div>
-            <h1 className="text-xl font-bold flex flex-col"> <span className='text-blue-500 text-4xl'> AI Developer </span> [Collaborative Platform]</h1>
+            <h1 className="text-xl font-bold flex flex-col"> 
+              <span className='bg-clip-text text-transparent bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-4xl font-extrabold tracking-tight'>
+                AI Developer
+              </span> 
+              <span className="text-gray-400 font-medium">[Collaborative Platform]</span>
+            </h1>
               
             </div>
             <div className="flex items-center gap-3">
