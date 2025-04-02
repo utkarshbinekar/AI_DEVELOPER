@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { motion } from "framer-motion"
 import { UserContext } from '../context/user.context'
 import axios from '../config/axios'
 
@@ -26,48 +27,99 @@ const Register = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#1A1F2E]">
-      <div className="w-full max-w-md px-8 pt-6 pb-8">
-        <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold flex flex-col text-white mb-10"> <span className='text-blue-500 text-6xl'> AI Developer </span> [Collaborative Platform]</h1>
-          <p className="mt-2 text-gray-200 text-lg ">Create your account</p>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tl from-[#0F172A] via-[#1E1B4B] to-[#312E81] relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+          className="absolute -right-1/4 -top-1/4 w-1/2 h-1/2 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 rounded-full blur-3xl"
+        />
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.5, delay: 0.2, ease: "easeOut" }}
+          className="absolute -left-1/4 -bottom-1/4 w-1/2 h-1/2 bg-gradient-to-tr from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl"
+        />
+      </div>
 
-        <div className="bg-[#151923] p-8 rounded-lg shadow-lg w-full">
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block text-gray-400 mb-2 text-sm font-medium" htmlFor="email">Email</label>
+      <div className="w-full max-w-md px-8 pt-6 pb-8 relative">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-8"
+        >
+          <h1 className="flex flex-col items-center gap-4">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-violet-400 to-indigo-400 text-6xl font-extrabold tracking-tight">
+              AI Developer
+            </span>
+            <span className="text-gray-400 font-medium text-xl">
+              [Collaborative Platform]
+            </span>
+          </h1>
+          <p className="mt-4 text-gray-300 text-lg">Create your account</p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+          className="backdrop-blur-xl bg-white/10 p-8 rounded-2xl shadow-2xl border border-white/20"
+        >
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Form fields with animations */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.3 }}
+            >
+              <label className="block text-gray-300 mb-2 text-sm font-medium">Email</label>
               <input
                 type="email"
-                id="email"
-                className="w-full p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-600"
+                className="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 border border-white/10 transition duration-200"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
                 required
               />
-            </div>
-            <div className="mb-6">
-              <label className="block text-gray-400 mb-2 text-sm font-medium" htmlFor="password">Password</label>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.4 }}
+            >
+              <label className="block text-gray-300 mb-2 text-sm font-medium">Password</label>
               <input
                 type="password"
-                id="password"
-                className="w-full p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-600"
+                className="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 border border-white/10 transition duration-200"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
                 required
               />
-            </div>
-            <button
+            </motion.div>
+
+            <motion.button
               type="submit"
-              className="w-full bg-gradient-to-r from-[#6366F1] to-[#4F46E5] hover:from-[#4F46E5] hover:to-[#4338CA] text-white py-2 rounded transition duration-200 font-medium shadow-lg shadow-indigo-500/20"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white py-3 rounded-lg transition duration-200 font-medium shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2"
             >
-              Create Account
-            </button>
+              <span>Create Account</span>
+              <i className="ri-arrow-right-line"></i>
+            </motion.button>
           </form>
-          <p className="text-sm text-gray-400 mt-4 text-center">
-            Already have an account? <Link to="/login" className="text-indigo-400 hover:text-indigo-300 font-medium">Sign in</Link>
+
+          <p className="text-sm text-gray-400 mt-6 text-center">
+            Already have an account? 
+            <Link to="/login" className="text-violet-400 hover:text-violet-300 font-medium ml-1 transition duration-200">
+              Sign in
+            </Link>
           </p>
-        </div>
+        </motion.div>
       </div>
     </div>
   )

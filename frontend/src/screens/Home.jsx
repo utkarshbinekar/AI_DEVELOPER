@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from '../context/user.context';
 import axios from '../config/axios';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const Home = () => {
   const { user } = useContext(UserContext);
@@ -63,18 +64,79 @@ export const Home = () => {
 
   // Theme classes
   const themeClasses = {
-    mainBg: darkMode ? 'bg-gradient-to-br from-[#0F172A] via-[#1E1B4B] to-[#312E81]' : 'bg-gradient-to-br from-gray-50 to-gray-100',
-    headerBg: darkMode ? 'bg-white/5 backdrop-blur-lg border-white/10' : 'bg-white/70 backdrop-blur-lg border-gray-200',
-    cardBg: darkMode ? 'bg-white/10 backdrop-blur-lg hover:bg-white/[0.15]' : 'bg-white hover:bg-gray-50',
-    inputBg: darkMode ? 'bg-white/10 backdrop-blur-lg border-white/10' : 'bg-white border-gray-200',
-    buttonPrimary: 'bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 shadow-lg shadow-indigo-500/25',
+    mainBg: darkMode ? 'bg-gradient-to-br from-[#0F172A] via-[#1E1B4B] to-[#312E81] text-white' : 'bg-gradient-to-br from-gray-50 to-gray-100 text-gray-900',
+    headerBg: darkMode ? 'bg-white/5 backdrop-blur-lg border-white/10 text-white' : 'bg-white/70 backdrop-blur-lg border-gray-200 text-gray-900',
+    cardBg: darkMode ? 'bg-white/10 backdrop-blur-lg hover:bg-white/[0.15] text-white' : 'bg-white hover:bg-gray-50 text-gray-900',
+    inputBg: darkMode ? 'bg-white/10 backdrop-blur-lg border-white/10 text-white placeholder-gray-400' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-500',
+    buttonPrimary: 'bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white shadow-lg shadow-indigo-500/25',
     buttonSecondary: darkMode ? 'bg-white/10 hover:bg-white/[0.15] text-white' : 'bg-white hover:bg-gray-50 text-gray-900',
-    modalBg: darkMode ? 'bg-[#1E1B4B]/90 backdrop-blur-xl border border-white/10' : 'bg-white',
+    modalBg: darkMode ? 'bg-[#1E1B4B]/90 backdrop-blur-xl border border-white/10 text-white' : 'bg-white text-gray-900',
     border: darkMode ? 'border-white/10' : 'border-gray-200',
     newProjectCard: darkMode 
-      ? 'bg-white/10 backdrop-blur-lg border-white/10 border-dashed hover:border-violet-500' 
-      : 'bg-white border-gray-300 border-dashed hover:border-violet-500'
+      ? 'bg-white/10 backdrop-blur-lg border-white/10 border-dashed hover:border-violet-500 text-white' 
+      : 'bg-white border-gray-300 border-dashed hover:border-violet-500 text-gray-900',
+    label: darkMode ? 'text-gray-200' : 'text-gray-700',
+    subtext: darkMode ? 'text-gray-300' : 'text-gray-600'
   };
+
+  const ProjectCard = ({ project }) => (
+    <motion.div
+      whileHover={{ y: -5 }}
+      whileTap={{ scale: 0.98 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      onClick={() => navigate(`/project/`, { state: project })}
+      className={`flex flex-col rounded-lg border ${themeClasses.border} ${themeClasses.cardBg} cursor-pointer`}
+    >
+      <div className="absolute top-2 right-2">
+        <motion.div
+          whileHover={{ scale: 1.2 }}
+          className="w-2 h-2 rounded-full bg-green-500"
+        />
+      </div>
+      <div className="p-5 flex-grow">
+        <div className="mb-2 flex items-center gap-3">
+          <div className={`h-8 w-8 rounded-md flex items-center justify-center ${themeClasses.buttonPrimary}`}>
+            <span className="text-white font-bold">{project.name[0].toUpperCase()}</span>
+          </div>
+          <h3 className="font-semibold text-lg truncate">{project.name}</h3>
+        </div>
+        <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+          Last updated recently
+        </div>
+      </div>
+      <div className={`px-5 py-3 border-t ${themeClasses.border} flex justify-between items-center`}>
+        <div className="flex items-center gap-2">
+          <i className="ri-group-line"></i>
+          <span>{project.users.length} Collaborator{project.users.length !== 1 ? 's' : ''}</span>
+        </div>
+        <div className="flex -space-x-2">
+          {project.users.slice(0, 3).map((user, index) => (
+            <div 
+              key={user._id || index} 
+              className="w-6 h-6 rounded-full bg-gray-500 border-2 border-white dark:border-gray-800 flex items-center justify-center text-white text-xs"
+              title={user.email}
+            >
+              {user.email ? user.email[0].toUpperCase() : 'U'}
+            </div>
+          ))}
+          {project.users.length > 3 && (
+            <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 border-2 border-white dark:border-gray-800 flex items-center justify-center text-xs">
+              +{project.users.length - 3}
+            </div>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+
+  const LoadingSpinner = () => (
+    <motion.div
+      animate={{ rotate: 360 }}
+      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+      className="w-8 h-8 border-t-2 border-violet-500 rounded-full"
+    />
+  );
 
   return (
     <div className={`min-h-screen ${themeClasses.mainBg}`}>
@@ -160,7 +222,7 @@ export const Home = () => {
         {/* Loading State */}
         {isLoading && (
           <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+            <LoadingSpinner />
           </div>
         )}
 
@@ -191,62 +253,31 @@ export const Home = () => {
                 <p>No projects match your search.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {/* New Project Card */}
-                <div 
-                  className={`flex flex-col justify-center items-center rounded-lg border ${themeClasses.newProjectCard} p-6 h-48 cursor-pointer transition-colors duration-200`}
-                  onClick={() => setModalOpen(true)}
+              <AnimatePresence>
+                <motion.div
+                  layout
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
                 >
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${darkMode ? 'bg-gray-700' : 'bg-gray-100'} mb-4`}>
-                    <i className="ri-add-line text-xl"></i>
-                  </div>
-                  <p className="font-medium">Create New Project</p>
-                </div>
-
-                {/* Project Cards */}
-                {filteredProjects.map((project) => (
+                  {/* New Project Card */}
                   <div 
-                    key={project._id}
-                    onClick={() => navigate(`/project/`, { state: project })}
-                    className={`flex flex-col rounded-lg border ${themeClasses.border} ${themeClasses.cardBg} overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-md`}
+                    className={`flex flex-col justify-center items-center rounded-lg border ${themeClasses.newProjectCard} p-6 h-48 cursor-pointer transition-colors duration-200`}
+                    onClick={() => setModalOpen(true)}
                   >
-                    <div className="p-5 flex-grow">
-                      <div className="mb-2 flex items-center gap-3">
-                        <div className={`h-8 w-8 rounded-md flex items-center justify-center ${themeClasses.buttonPrimary}`}>
-                          <span className="text-white font-bold">{project.name[0].toUpperCase()}</span>
-                        </div>
-                        <h3 className="font-semibold text-lg truncate">{project.name}</h3>
-                      </div>
-                      <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        {/* Last updated timestamp or creation date could go here */}
-                        Last updated recently
-                      </div>
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${darkMode ? 'bg-gray-700' : 'bg-gray-100'} mb-4`}>
+                      <i className="ri-add-line text-xl"></i>
                     </div>
-                    <div className={`px-5 py-3 border-t ${themeClasses.border} flex justify-between items-center`}>
-                      <div className="flex items-center gap-2">
-                        <i className="ri-group-line"></i>
-                        <span>{project.users.length} Collaborator{project.users.length !== 1 ? 's' : ''}</span>
-                      </div>
-                      <div className="flex -space-x-2">
-                        {project.users.slice(0, 3).map((user, index) => (
-                          <div 
-                            key={user._id || index} 
-                            className="w-6 h-6 rounded-full bg-gray-500 border-2 border-white dark:border-gray-800 flex items-center justify-center text-white text-xs"
-                            title={user.email}
-                          >
-                            {user.email ? user.email[0].toUpperCase() : 'U'}
-                          </div>
-                        ))}
-                        {project.users.length > 3 && (
-                          <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 border-2 border-white dark:border-gray-800 flex items-center justify-center text-xs">
-                            +{project.users.length - 3}
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                    <p className="font-medium">Create New Project</p>
                   </div>
-                ))}
-              </div>
+
+                  {/* Project Cards */}
+                  {filteredProjects.map((project) => (
+                    <ProjectCard 
+                      key={project._id}
+                      project={project}
+                    />
+                  ))}
+                </motion.div>
+              </AnimatePresence>
             )}
           </>
         )}
@@ -267,7 +298,7 @@ export const Home = () => {
             </div>
             <form onSubmit={createProject}>
               <div className="mb-4">
-                <label className="block mb-2 font-medium">Project Name</label>
+                <label className={`block mb-2 font-medium ${themeClasses.label}`}>Project Name</label>
                 <input
                   type="text"
                   value={projectName}

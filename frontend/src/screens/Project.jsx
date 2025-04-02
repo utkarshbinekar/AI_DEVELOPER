@@ -7,6 +7,7 @@ import Markdown from 'markdown-to-jsx';
 import { debounce } from 'lodash'; // Import debounce from lodash
 import Editor from "@monaco-editor/react";
 import {getWebContainer} from "../config/webContainer"
+import { motion } from "framer-motion";
 
 // Create debounced send outside component to prevent recreation
 const debouncedSend = debounce((message, user, setMessage, setMessages, messages, setIsSending, project) => {
@@ -463,20 +464,29 @@ useEffect(() => {
 
   // Update themeClasses object
   const themeClasses = {
-    mainBg: darkMode ? 'bg-[#1E1B2E] text-white' : 'bg-[#F8F9FC] text-gray-900',
-    sidebarBg: darkMode ? 'bg-[#252236] hover:bg-[#2A2740]' : 'bg-white',
-    headerBg: darkMode ? 'bg-[#252236] border-[#363147]' : 'bg-white border-gray-200',
-    cardBg: darkMode ? 'bg-[#2A2740]' : 'bg-white',
-    inputBg: darkMode ? 'bg-[#2A2740] text-white border-[#363147]' : 'bg-white text-gray-900 border-gray-200',
-    buttonPrimary: 'bg-gradient-to-r from-[#6366F1] to-[#4F46E5] hover:from-[#4F46E5] hover:to-[#4338CA] text-white shadow-lg shadow-indigo-500/20',
-    messageReceived: darkMode ? 'bg-[#2A2740]' : 'bg-gray-100',
-    messageSent: 'bg-gradient-to-r from-[#6366F1] to-[#4F46E5]',
-    modalBg: darkMode ? 'bg-[#252236] text-white' : 'bg-white text-gray-900',
-    border: darkMode ? 'border-[#363147]' : 'border-gray-200',
-    hoverBg: darkMode ? 'hover:bg-[#2A2740]' : 'hover:bg-gray-100',
-    activeTab: darkMode ? 'bg-[#2A2740] text-white' : 'bg-gray-100 text-gray-900',
-    inactiveTab: darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900',
-    scrollbar: darkMode ? 'scrollbar-thin scrollbar-thumb-[#363147] scrollbar-track-[#252236]' : 'scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100'
+    mainBg: darkMode ? 'bg-gradient-to-br from-[#0F172A] via-[#1E1B4B] to-[#312E81] text-white' : 'bg-gradient-to-br from-gray-50 to-gray-100 text-gray-900',
+    sidebarBg: darkMode ? 'bg-white/5 backdrop-blur-lg text-white' : 'bg-white/70 backdrop-blur-lg text-gray-900',
+    headerBg: darkMode ? 'bg-white/5 backdrop-blur-lg border-white/10 text-white' : 'bg-white/70 backdrop-blur-lg border-gray-200 text-gray-900',
+    cardBg: darkMode ? 'bg-white/10 backdrop-blur-lg text-white' : 'bg-white text-gray-900',
+    inputBg: darkMode ? 'bg-white/10 backdrop-blur-lg border-white/10 text-white placeholder-gray-400' : 'bg-white border-gray-200 text-gray-900 placeholder-gray-500',
+    buttonPrimary: 'bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white shadow-lg shadow-indigo-500/25',
+    messageReceived: darkMode ? 'bg-white/10 backdrop-blur-lg text-white' : 'bg-gray-100 text-gray-900',
+    messageSent: 'bg-gradient-to-r from-violet-500 to-indigo-500 text-white',
+    modalBg: darkMode ? 'bg-[#1E1B4B]/90 backdrop-blur-xl border border-white/10 text-white' : 'bg-white text-gray-900',
+    border: darkMode ? 'border-white/10' : 'border-gray-200',
+    tabActive: darkMode ? 'bg-white/15 text-white' : 'bg-gray-100 text-gray-900',
+    tabInactive: darkMode ? 'text-gray-400 hover:text-white hover:bg-white/10' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50',
+    label: darkMode ? 'text-gray-200' : 'text-gray-700',
+    placeholder: darkMode ? 'text-gray-400' : 'text-gray-500',
+    input: darkMode 
+      ? 'bg-white/10 border-white/10 text-white focus:border-violet-500 placeholder-transparent' 
+      : 'bg-white border-gray-200 text-gray-900 focus:border-violet-500 placeholder-transparent',
+    floatingLabel: darkMode
+      ? 'text-gray-400 peer-focus:text-violet-400 peer-placeholder-shown:text-gray-500'
+      : 'text-gray-700 peer-focus:text-violet-600 peer-placeholder-shown:text-gray-500',
+    chatBubble: darkMode
+      ? 'bg-white/10 backdrop-blur-lg border border-white/10 shadow-lg'
+      : 'bg-white border border-gray-200 shadow-md'
   };
 
   const getTabStyle = (width) => {
@@ -575,10 +585,57 @@ useEffect(() => {
     return languageMap[extension] || 'plaintext';
   };
 
+  const ChatInput = () => (
+    <div className="relative">
+      <input
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        className={`peer w-full p-4 rounded-lg border ${themeClasses.input} transition-all`}
+        placeholder=" "
+        onKeyDown={(e) => e.key === 'Enter' && send()}
+      />
+      <label className={`absolute left-2 -top-2.5 px-1 text-sm transition-all ${themeClasses.floatingLabel} ${themeClasses.cardBg}`}>
+        Message
+      </label>
+    </div>
+  );
+
+  const MessageBubble = ({ message, isSent }) => (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`${themeClasses.chatBubble} rounded-lg p-4 max-w-[80%] ${
+        isSent ? 'ml-auto' : 'mr-auto'
+      }`}
+    >
+      {message.sender._id === 'ai' ? (
+        WriteAiMessage(message.message)
+      ) : (
+        <p className="text-sm h-min-[30vh] no-scrollbar">{message.message}</p>
+      )}
+      <small className="opacity-50 text-xs mt-1 self-end">
+        {new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+      </small>
+    </motion.div>
+  );
+
   return (
-    <main className={`h-screen w-screen flex ${themeClasses.mainBg}`}>
-      {/* Sidebar */}
-      <section 
+    <motion.main 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className={`h-screen w-screen flex ${themeClasses.mainBg}`}
+    >
+      {/* Background decorative elements */}
+      <div className="fixed inset-0 overflow-hidden -z-10">
+        <div className="absolute -left-1/4 -top-1/4 w-1/2 h-1/2 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 rounded-full blur-3xl"></div>
+        <div className="absolute -right-1/4 -bottom-1/4 w-1/2 h-1/2 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl"></div>
+      </div>
+
+      {/* Sidebar with updated styling */}
+      <motion.section
+        initial={{ x: -50, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
         style={{ width: sidebarWidth, minWidth: '350px', maxWidth: '800px' }}
         className={`left flex flex-col h-full ${themeClasses.sidebarBg} border-r ${themeClasses.border} relative`}
       >
@@ -659,50 +716,15 @@ useEffect(() => {
                   <div className="message-box p-3 flex-grow overflow-y-auto no-scrollbar flex flex-col-reverse gap-3">
                   <div className="flex-grow" /> {/* Spacer to push messages down */}
                   {messages.slice(0).reverse().map((msg, index) => (
-                    <div 
-                    key={index} 
-                    className={`message max-w-64 flex flex-col p-3 rounded-lg ${
-                      msg.sender._id === user._id || msg.sender === user._id 
-                      ? `${themeClasses.messageSent} text-white ml-auto` 
-                      : msg.sender._id === 'ai' 
-                      ? 'bg-[#1e1e1e] text-[#d4d4d4] font-mono p-4 rounded-md border border-[#3c3c3c]' // VS Code colorful theme for AI messages
-                      : `${themeClasses.messageReceived} mr-auto`
-                    }`}
-                    style={{ maxWidth: '90%', wordWrap: 'break-word' }} // Fix overflow issue
-                    >
-                    <small className="opacity-75 text-xs mb-1">{
-                      msg.sender._id === user._id || msg.sender === user._id  ? 'YOU' : msg.sender._id === 'ai' ? 'AI' : (msg.sender.email.split('@')[0].toUpperCase() || 'User')
-                    }</small>
-                    {msg.sender._id === 'ai' ? (
-
-                        WriteAiMessage(msg.message)
-                    ) : (
-                      <p className="text-sm h-min-[30vh] no-scrollbar">{msg.message}</p>
-                    )}
-                    <small className="opacity-50 text-xs mt-1 self-end">
-                      {new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                    </small>
-                    </div>
+                    <MessageBubble 
+                      key={index} 
+                      message={msg} 
+                      isSent={msg.sender._id === user._id || msg.sender === user._id}
+                    />
                   ))}
                   </div>
                   <div className="inputField p-3 mb-5 border-t">
-                  <div className={`flex rounded-md border ${themeClasses.border} overflow-hidden`}>
-                    <input
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    className={`p-2 px-4 w-full h-2/3 outline-none no-scrollbar ${darkMode ? 'bg-[#1e1e1e] text-[#d4d4d4]' : themeClasses.inputBg} border-none`} // Match VS Code theme for dark mode
-                    type="text" 
-                    placeholder="Type your message..." 
-                    onKeyDown={(e) => e.key === 'Enter' && send()} // Use debouncedSend
-                    />
-                    <button
-                    onClick={send} // Use debouncedSend
-                    disabled={!message.trim() || isSending} // Disable button if message is empty or sending
-                    className={`px-4 ${themeClasses.buttonPrimary} text-white`}
-                    >
-                    <i className="ri-send-plane-fill"></i>
-                    </button>
-                  </div>
+                    <ChatInput />
                   </div>
                 </div>
                 )}
@@ -775,24 +797,33 @@ useEffect(() => {
               
             )}
         </div>
-      </section>
+      </motion.section>
 
       {/* Main Content Area */}
-      <section className={`flex-grow h-full overflow-hidden flex flex-col relative`}>
-        {/* Project Header */}
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="flex-grow h-full overflow-hidden flex flex-col relative"
+      >
+        {/* Header with gradient title */}
         <header className={`px-6 py-4 border-b ${themeClasses.headerBg} ${themeClasses.border}`}>
           <div className="flex justify-between items-center">
-            <div>
-            <h1 className="text-xl font-bold flex flex-col"> 
-              <span className='bg-clip-text text-transparent bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-4xl font-extrabold tracking-tight'>
+            <motion.h1 
+              initial={{ y: -20 }}
+              animate={{ y: 0 }}
+              className="text-xl font-bold flex flex-col"
+            >
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-violet-400 to-indigo-400 text-4xl font-extrabold tracking-tight">
                 AI Developer
-              </span> 
-              <span className="text-gray-400 font-medium">[Collaborative Platform]</span>
-            </h1>
-              
-            </div>
+              </span>
+              <span className="text-gray-400 font-medium">
+                [Collaborative Platform]
+              </span>
+            </motion.h1>
+            
             <div className="flex items-center gap-3">
-            <button
+              <button
               onClick={() =>{
                 localStorage.removeItem("token");
                 navigate("/login")
@@ -819,7 +850,9 @@ useEffect(() => {
         </header>
 
         {/* Preview Toggle Button - Moved to bottom right */}
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => setShowIframe(!showIframe)}
           className={`fixed bottom-6 right-6 z-50 px-4 py-2 rounded-md ${
             showIframe ? themeClasses.buttonPrimary : 'bg-gray-500'
@@ -827,7 +860,7 @@ useEffect(() => {
         >
           <i className={`ri-${showIframe ? 'code' : 'eye'}-line mr-1`}></i>
           <span>{showIframe ? 'Show Editor' : 'Show Preview'}</span>
-        </button>
+        </motion.button>
 
         {/* Project Code Area */}
         <div className="flex-grow flex">
@@ -973,11 +1006,16 @@ useEffect(() => {
           )}
         </div>
 
-      </section>
+      </motion.section>
 
       {/* Add Collaborator Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+        >
           <div className={`${themeClasses.modalBg} p-6 rounded-lg w-96 max-w-full relative`}>
             <header className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Add Collaborators</h2>
@@ -1027,9 +1065,9 @@ useEffect(() => {
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
-    </main>
+    </motion.main>
   );
 };
 

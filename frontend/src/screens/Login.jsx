@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from '../config/axios'
 import {UserContext} from '../context/user.context'
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -10,22 +10,39 @@ const Login = () => {
   const navigate = useNavigate()
   const { setUser } = useContext(UserContext)
   const [focused, setFocused] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    axios.post('/users/login',{
-      email,
-      password
-    }).then((res)=>{
-      console.log(res.data.user)
-      localStorage.setItem('token',res.data.token)
-      setUser(res.data.user)
-      
-      navigate('/')
-    }).catch((err) => {
-      console.log(err.response.data)
-    })
-  }
+  const validateForm = () => {
+    const newErrors = {};
+    if (!email) newErrors.email = 'Email is required';
+    if (!password) newErrors.password = 'Password is required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    
+    setIsSubmitting(true);
+    try {
+      axios.post('/users/login',{
+        email,
+        password
+      }).then((res)=>{
+        console.log(res.data.user)
+        localStorage.setItem('token',res.data.token)
+        setUser(res.data.user)
+        
+        navigate('/')
+      }).catch((err) => {
+        setErrors({ submit: err.response?.data?.message || 'Login failed' });
+      })
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0F172A] via-[#1E1B4B] to-[#312E81] relative overflow-hidden">
@@ -35,6 +52,19 @@ const Login = () => {
         <div className="absolute -right-1/4 -bottom-1/4 w-1/2 h-1/2 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl"></div>
       </div>
       
+      <AnimatePresence>
+        {errors.submit && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-4 right-4 bg-red-500/90 text-white px-4 py-2 rounded-lg backdrop-blur-sm"
+          >
+            {errors.submit}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="w-full max-w-md px-8 pt-6 pb-8 relative">
         <div className="text-center mb-8">
           <motion.h1
@@ -70,6 +100,7 @@ const Login = () => {
                 placeholder="Enter your email"
                 required
               />
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             </div>
             <div className="mb-6">
               <label className="block text-gray-300 mb-2 text-sm font-medium">Password</label>
@@ -81,10 +112,12 @@ const Login = () => {
                 placeholder="••••••••"
                 required
               />
+              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
             </div>
             <button
               type="submit"
               className="w-full bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white py-3 rounded-lg transition duration-200 font-medium shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2"
+              disabled={isSubmitting}
             >
               <span>Sign In</span>
               <i className="ri-arrow-right-line"></i>
